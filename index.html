@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board Game Timer</title>
+    <meta name="description" content="A multi-player timer app for board game sessions">
+    <meta name="theme-color" content="#3b82f6">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- Mobile sticky current turn display -->
+    <div class="mobile-current-turn-sticky" id="mobileStickyTurn" style="display: none;">
+        <div class="current-player-name" id="mobileCurrentPlayerName">Player 1</div>
+        <div class="mobile-timer-container">
+            <div class="current-timer-display">
+                <span id="mobileCurrentMinutes">05</span>:<span id="mobileCurrentSeconds">00</span>
+            </div>
+            <button id="mobileNextPlayerBtn" class="mobile-next-player-btn" disabled>Next Player</button>
+        </div>
+    </div>
+
+    <div id="app">
+        <header>
+            <h1>Board Game Timer</h1>
+        </header>
+
+        <main>
+            <div class="game-container">
+                <div class="game-controls">
+                    <button id="startBtn" class="btn btn-primary">Start Game</button>
+                    <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
+                    <button id="resetBtn" class="btn btn-danger">Reset Game</button>
+                    <button id="wakeLockBtn" class="btn btn-outline">Keep Screen On</button>
+                </div>
+
+                <div class="timer-settings">
+                    <label for="timerInput">Turn Timer (minutes):</label>
+                    <input type="number" id="timerInput" min="0" max="60" value="0">
+                    <button id="setTimerBtn" class="btn btn-outline">Set</button>
+                    <p class="timer-help-text">Set to 0 for unlimited time (count up mode)</p>
+                </div>
+
+                <div class="player-management">
+                    <h3>Players</h3>
+                    <div class="player-controls">
+                        <button id="addPlayerBtn" class="btn btn-primary">Add Player</button>
+                        <button id="shufflePlayersBtn" class="btn btn-outline">Shuffle Order</button>
+                    </div>
+                </div>
+
+                <div id="playersContainer" class="players-container">
+                    <!-- Players will be dynamically added here -->
+                </div>
+
+                <div class="current-turn" id="currentTurnDisplay" style="display: none;">
+                    <h3>Current Turn</h3>
+                    <div class="current-turn-layout">
+                        <div class="current-turn-left">
+                            <div class="current-player-name" id="currentPlayerName">Player 1</div>
+                            <div class="current-timer-display">
+                                <span id="currentMinutes">05</span>:<span id="currentSeconds">00</span>
+                            </div>
+                        </div>
+                        <button id="nextPlayerBtn" class="current-turn-next-btn" disabled>
+                            Next Player
+                            <div class="keyboard-hint">Press Space</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="session-info">
+                <h3>Session Info</h3>
+                <p>Games played: <span id="gamesPlayed">0</span></p>
+                <p>Current round: <span id="currentRound">0</span></p>
+            </div>
+        </main>
+
+        <footer>
+            <div class="keyboard-shortcuts-info">
+                <p class="shortcuts-title">⌨️ Keyboard Shortcuts (Desktop)</p>
+                <p class="shortcut-item"><kbd>Space</kbd> Next Player (during game) • <kbd>Esc</kbd> Pause/Resume • <kbd>Enter</kbd> Set Timer</p>
+            </div>
+            <p>&copy; 2025 Board Game Timer</p>
+            <p class="version-info">Version: <span id="appVersion">Loading...</span></p>
+        </footer>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+{
+    "name": "BoardGame Timer",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:18",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+    "features": {
+      // Common utilities + ZSH for the default 'node' user
+      "ghcr.io/devcontainers/features/common-utils:2": {
+        "installZsh": true,
+        "configureZshAsDefaultShell": true,
+        "installOhMyZsh": true,
+        "installOhMyZshConfig": true,
+        "upgradePackages": true
+      },
+      "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+
+    "postCreateCommand": "npm ci && npm install -g vercel",
+    "postStartCommand": "npm run dev",
+    "forwardPorts": [3000],
+
+    // Publish container’s port 3000 on your Mac
+    "runArgs": ["-p", "3000:3000"],
+
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "bradlc.vscode-tailwindcss",
+          "VisualStudioExptTeam.vscodeintellicode",
+          "rangav.vscode-thunder-client",
+          "EditorConfig.EditorConfig",
+          "GitHub.copilot",
+          "yzhang.markdown-all-in-one",
+          "inferrinizzard.prettier-sql-vscode",
+          "Vercel.vercel-deployment-extension",
+          "dbaeumer.vscode-eslint",
+          "esbenp.prettier-vscode",
+          "eamodio.gitlens",
+          "mhutchie.git-graph",
+          "christian-kohler.path-intellisense",
+          "ms-azuretools.vscode-docker",
+          "ms-vscode.vscode-typescript-tslint-plugin"
+        ],
+        "settings": {
+          "editor.quickSuggestions.strings": true,
+          "terminal.integrated.defaultProfile.linux": "zsh",
+          "files.eol": "\n",
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.bracketPairColorization.enabled": true,
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "always",
+            "source.fixAll": "always",
+            "source.fixAll.eslint": "always"
+          },
+          "editor.fontFamily": "Source Code Pro, Consolas, monospace",
+          "editor.fontSize": 16,
+          "editor.minimap.enabled": false,
+          "editor.rulers": [120],
+          "editor.wordWrap": "on",
+          "files.insertFinalNewline": true,
+          "files.trimTrailingWhitespace": true,
+          "terminal.integrated.fontSize": 14,
+          "workbench.editorLargeFileConfirmation": 5,
+          "eslint.alwaysShowStatus": true,
+          "prettier.requireConfig": true,
+          "files.exclude": {
+            "**/.git": true,
+            "**/node_modules": true,
+            "**/dist": true
+          },
+          "vercel.cliPath": "/usr/local/bin/vercel",
+          "vercel.command": "vercel dev"
+        }
+      }
+    },
+
+    // Match the user that the Node image actually provides
+    "remoteUser": "node"
+  }

@@ -1,0 +1,22 @@
+{
+  "name": "my-boardgame-timer",
+  "version": "1.0.0",
+  "description": "A board game timer application",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,html --report-unused-disable-directives --max-warnings 0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "eslint": "^9.0.0"
+  },
+  "dependencies": {
+    "workbox-window": "^7.0.0"
+  },
+  "keywords": ["board-game", "timer", "pwa"],
+  "author": "",
+  "license": "MIT"
+}
