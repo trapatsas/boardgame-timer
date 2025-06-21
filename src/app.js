@@ -23,39 +23,35 @@ let lastAutoSaveTimestamp = Date.now(); // Tracks last auto-save moment
 let hasShownTimeUpNotification = false; // Track if we've shown the time-up notification for current turn
 
 // --- Screen Wake Lock ---
-let wakeLock = null;
+// let wakeLock = null;
 
-async function requestWakeLock() {
-  if ('wakeLock' in navigator) {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      console.log('Screen Wake Lock activated.');
+// async function enableWakeLock() {
+//   if ('wakeLock' in navigator) {
+//     try {
+//       wakeLock = await navigator.wakeLock.request('screen');
+//       wakeLock.addEventListener('release', () => {
+//         console.log('Wake lock released');
+//       });
+//       console.log('Wake lock active');
+//     } catch (err) {
+//       console.error('Wake Lock error:', err);
+//     }
+//   } else {
+//     enableNoSleepFallback();
+//   }
+// }
 
-      wakeLock.addEventListener('release', () => {
-        // The lock is released when the tab is hidden or on system request.
-        // It will be re-acquired on visibilitychange if the game is still running.
-        console.log('Screen Wake Lock released.');
-        wakeLock = null;
-      });
-    } catch (err) {
-      console.error('Could not acquire wake lock:', err);
-    }
-  } else {
-    console.log('Wake Lock API not supported.');
-  }
-}
-
-async function releaseWakeLock() {
-  if (wakeLock) {
-    try {
-      await wakeLock.release();
-      wakeLock = null;
-      console.log('Screen Wake Lock released programmatically.');
-    } catch (err) {
-      console.error('Could not release wake lock:', err);
-    }
-  }
-}
+// async function releaseWakeLock() {
+//   if (wakeLock !== null) {
+//     try {
+//       await wakeLock.release();
+//       wakeLock = null;
+//       console.log('Screen Wake Lock released programmatically.');
+//     } catch (err) {
+//       console.error('Could not release wake lock:', err);
+//     }
+//   }
+// }
 
 // Persistent interaction/event log
 let eventLog = JSON.parse(localStorage.getItem('bgt:events') || '[]');
@@ -928,6 +924,9 @@ window.addEventListener('beforeunload', () => {
 // Save state when page becomes hidden (device lock, app switch)
 // and re-acquire wake lock when it becomes visible.
 document.addEventListener('visibilitychange', async () => {
+  if (wakeLock !== null && document.visibilityState === 'visible') {
+    await enableWakeLock();
+  }
   if (document.hidden) {
     if (isGameRunning) {
       saveSessionData();
@@ -935,7 +934,7 @@ document.addEventListener('visibilitychange', async () => {
   } else {
     // Page is visible
     if (isGameRunning && !isPaused && isWakeLockEnabled) {
-      await requestWakeLock();
+      await enableWakeLock();
     }
   }
 });
@@ -982,7 +981,7 @@ async function startGame() {
 
     requestNotificationPermission();
     if (isWakeLockEnabled) {
-      await requestWakeLock();
+      await enableWakeLock();
     }
   }
 }
@@ -1020,7 +1019,7 @@ async function pauseGame() {
     saveSessionData(); // Save when resuming
     // Only re-acquire lock if it's enabled by user
     if (isWakeLockEnabled) {
-      await requestWakeLock();
+      await enableWakeLock();
     }
   }
 }
@@ -1113,11 +1112,16 @@ function nextPlayer() {
 
 // Function to update the wake lock button's appearance
 function updateWakeLockButton() {
+  const icon = wakeLockBtn.querySelector('.icon');
   if (isWakeLockEnabled) {
-    wakeLockBtn.textContent = 'Allow Screen Sleep';
+    icon.textContent = '👁️'; // Open eye icon
+    wakeLockBtn.textContent = ' Screen On';
+    wakeLockBtn.prepend(icon);
     wakeLockBtn.classList.add('active');
   } else {
-    wakeLockBtn.textContent = 'Keep Screen On';
+    icon.textContent = '😴'; // Sleep icon
+    wakeLockBtn.textContent = ' Screen Off';
+    wakeLockBtn.prepend(icon);
     wakeLockBtn.classList.remove('active');
   }
 }
@@ -1130,7 +1134,7 @@ async function toggleWakeLock() {
   // If game is running and not paused, apply the new setting immediately
   if (isGameRunning && !isPaused) {
     if (isWakeLockEnabled) {
-      await requestWakeLock();
+      await enableWakeLock();
     } else {
       await releaseWakeLock();
     }
