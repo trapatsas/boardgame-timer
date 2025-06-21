@@ -11,7 +11,7 @@ let currentRound = 0;
 let totalGameTime = 0; // Total elapsed game time in seconds
 let currentTurnTime = 0; // Current turn elapsed time in seconds
 let isIncrementalMode = true; // True when no turn timer is set (default to true)
-let isWakeLockEnabled = false; // User preference for wake lock
+// let isWakeLockEnabled = false; // User preference for wake lock
 
 // Timestamp anchors for accurate time keeping across tab suspension
 let gameStartTimestamp = null; // Epoch ms when the current game began
@@ -91,7 +91,7 @@ function getTotalGameElapsedSeconds() {
 const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const resetBtn = document.getElementById('resetBtn');
-const wakeLockBtn = document.getElementById('wakeLockBtn');
+// const wakeLockBtn = document.getElementById('wakeLockBtn');
 const nextPlayerBtn = document.getElementById('nextPlayerBtn');
 const timerInput = document.getElementById('timerInput');
 const setTimerBtn = document.getElementById('setTimerBtn');
@@ -193,7 +193,7 @@ function init() {
   registerServiceWorker();
   setupEventListeners();
   updateMobileUX();
-  updateWakeLockButton(); // Set initial button state
+  // updateWakeLockButton(); // Set initial button state
   generateAppVersion(); // Generate and display version
 }
 
@@ -658,7 +658,6 @@ function saveSessionData() {
     currentTurnTime,
     isIncrementalMode,
     hasShownTimeUpNotification,
-    isWakeLockEnabled,
     // Timestamp for calculating elapsed time during page refresh
     lastSaveTime: Date.now(),
     gameStartTimestamp,
@@ -700,7 +699,7 @@ function loadSessionData() {
       currentTurnTime = data.currentTurnTime || 0;
       isIncrementalMode = data.isIncrementalMode !== undefined ? data.isIncrementalMode : true;
       hasShownTimeUpNotification = data.hasShownTimeUpNotification || false;
-      isWakeLockEnabled = data.isWakeLockEnabled || false;
+      // isWakeLockEnabled = data.isWakeLockEnabled || false;
 
       // Restore anchor timestamps (newer format)
       gameStartTimestamp = data.gameStartTimestamp || null;
@@ -816,7 +815,7 @@ function setupEventListeners() {
   setTimerBtn.addEventListener('click', setTimer);
   addPlayerBtn.addEventListener('click', () => addPlayer());
   shufflePlayersBtn.addEventListener('click', shufflePlayers);
-  wakeLockBtn.addEventListener('click', toggleWakeLock);
+  // wakeLockBtn.addEventListener('click', toggleWakeLock);
 
   // Timer input validation
   timerInput.addEventListener('input', handleTimerInputChange);
@@ -924,18 +923,18 @@ window.addEventListener('beforeunload', () => {
 // Save state when page becomes hidden (device lock, app switch)
 // and re-acquire wake lock when it becomes visible.
 document.addEventListener('visibilitychange', async () => {
-  if (wakeLock !== null && document.visibilityState === 'visible') {
-    await enableWakeLock();
-  }
+  // if (wakeLock !== null && document.visibilityState === 'visible') {
+  //   await enableWakeLock();
+  // }
   if (document.hidden) {
     if (isGameRunning) {
       saveSessionData();
     }
   } else {
     // Page is visible
-    if (isGameRunning && !isPaused && isWakeLockEnabled) {
-      await enableWakeLock();
-    }
+    // if (isGameRunning && !isPaused && isWakeLockEnabled) {
+    //   await enableWakeLock();
+    // }
   }
 });
 
@@ -980,9 +979,9 @@ async function startGame() {
     saveSessionData(); // Save immediately when starting
 
     requestNotificationPermission();
-    if (isWakeLockEnabled) {
-      await enableWakeLock();
-    }
+    // if (isWakeLockEnabled) {
+    //   await enableWakeLock();
+    // }
   }
 }
 
@@ -997,9 +996,9 @@ async function pauseGame() {
     pauseBtn.textContent = 'Resume';
     saveSessionData(); // Save when pausing
     // Only release lock if it was enabled
-    if (isWakeLockEnabled) {
-      await releaseWakeLock();
-    }
+    // if (isWakeLockEnabled) {
+    //   await releaseWakeLock();
+    // }
   } else if (isGameRunning && isPaused) {
     isPaused = false;
 
@@ -1018,16 +1017,16 @@ async function pauseGame() {
     resumeGameTimer(); // Use the new resume function
     saveSessionData(); // Save when resuming
     // Only re-acquire lock if it's enabled by user
-    if (isWakeLockEnabled) {
-      await enableWakeLock();
-    }
+    // if (isWakeLockEnabled) {
+    //   await enableWakeLock();
+    // }
   }
 }
 
 async function resetGame() {
   logEvent('resetGame');
   // Always release the lock on reset, regardless of preference
-  await releaseWakeLock();
+  // await releaseWakeLock();
 
   // Prune event log after logging the reset event
   eventLog = [];
@@ -1134,9 +1133,9 @@ async function toggleWakeLock() {
   // If game is running and not paused, apply the new setting immediately
   if (isGameRunning && !isPaused) {
     if (isWakeLockEnabled) {
-      await enableWakeLock();
+      // await enableWakeLock();
     } else {
-      await releaseWakeLock();
+      // await releaseWakeLock();
     }
   }
 
